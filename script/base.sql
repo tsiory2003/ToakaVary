@@ -68,11 +68,19 @@ CREATE TABLE Employe (
   poste VARCHAR(100) NOT NULL,
   email VARCHAR(100),
   telephone VARCHAR(20),
-  id_statut_employe INT DEFAULT 1,
   id_departement INT NOT NULL,
-  FOREIGN KEY (id_statut_employe) REFERENCES Statut_Employe(id),
   FOREIGN KEY (id_departement) REFERENCES Departement(id),
   CONSTRAINT unique_nom_employe UNIQUE (nom)
+);
+
+-- Mouvement des statuts d'employé
+CREATE TABLE Mouvement_Employe (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  id_employe INT NOT NULL,
+  id_statut_employe INT NOT NULL,
+  date_mouvement DATETIME NOT NULL,
+  FOREIGN KEY (id_employe) REFERENCES Employe(id),
+  FOREIGN KEY (id_statut_employe) REFERENCES Statut_Employe(id)
 );
 
 -- Détails des mouvements de stock des matières premières
@@ -292,3 +300,21 @@ CREATE TABLE Vente (
   FOREIGN KEY (id_commande) REFERENCES Commande(id),
   CONSTRAINT check_montant_positive CHECK (montant >= 0)
 );
+
+INSERT INTO departements (nom, description) VALUES
+('Production', 'Département de production'),
+('Admin et Finance', 'Département administratif et financier'),
+('Logistique', 'Département logistique'),
+('Commerce et marketing', 'Département commercial et marketing');
+
+-- Exemple d'insertion d'un employé
+INSERT INTO employes (nom, poste, email, telephone, id_departement, created_at, updated_at)
+VALUES ('Jean Rakoto', 'Responsable Production', 'jean.rakoto@email.com', '0321234567', 1, NOW(), NOW());
+
+-- Insertion des statuts 'Entrée' et 'Sortie'
+INSERT INTO statut_employes (nom) VALUES ('Entrée');
+INSERT INTO statut_employes (nom) VALUES ('Sortie');
+
+-- Mouvement d'entrée pour l'employé créé
+INSERT INTO mouvement_employes (id_employe, id_statut_employe, date_mouvement)
+VALUES (1, 1, NOW());
